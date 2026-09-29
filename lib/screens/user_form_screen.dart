@@ -1,3 +1,5 @@
+import 'package:expenz_application/screens/main_screen.dart';
+import 'package:expenz_application/services/user_services.dart';
 import 'package:expenz_application/utils/colors.dart';
 import 'package:expenz_application/utils/constants.dart';
 import 'package:expenz_application/widgets/custom_button.dart';
@@ -20,7 +22,8 @@ class _UserFormScreenState extends State<UserFormScreen> {
   final TextEditingController _userNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   // the values of above variables will store in memory. But we don't need that data to other pages. So simply we can dispose those values
   @override
@@ -61,7 +64,7 @@ class _UserFormScreenState extends State<UserFormScreen> {
                       TextFormField(
                         controller: _userNameController,
                         validator: (value) {
-                          if(value!.isEmpty) {
+                          if (value!.isEmpty) {
                             return "Please enter your name";
                           }
                         },
@@ -80,7 +83,7 @@ class _UserFormScreenState extends State<UserFormScreen> {
                       TextFormField(
                         controller: _emailController,
                         validator: (value) {
-                          if(value!.isEmpty) {
+                          if (value!.isEmpty) {
                             return "Please enter your email";
                           }
                         },
@@ -100,7 +103,7 @@ class _UserFormScreenState extends State<UserFormScreen> {
                         obscureText: true,
                         controller: _passwordController,
                         validator: (value) {
-                          if(value!.isEmpty) {
+                          if (value!.isEmpty) {
                             return "Please enter your password";
                           }
                         },
@@ -120,7 +123,7 @@ class _UserFormScreenState extends State<UserFormScreen> {
                         obscureText: true,
                         controller: _confirmPasswordController,
                         validator: (value) {
-                          if(value!.isEmpty) {
+                          if (value!.isEmpty) {
                             return "Please enter your same password";
                           }
                         },
@@ -164,15 +167,37 @@ class _UserFormScreenState extends State<UserFormScreen> {
 
                       // submit button
                       GestureDetector(
-                        onTap: () {
+                        onTap: () async {
                           // if the user entered data validated process forward
-                          if(_formKey.currentState!.validate()) {
+                          if (_formKey.currentState!.validate()) {
                             // process with the data
                             // getting user entered data
                             String userName = _userNameController.text;
                             String email = _emailController.text;
                             String password = _passwordController.text;
-                            String confirmPassword = _confirmPasswordController.text;
+                            String confirmPassword =
+                                _confirmPasswordController.text;
+
+                            // save username and email in the storage
+                            await UserServices.storeUserDetails(
+                              username: userName,
+                              email: email,
+                              password: password,
+                              confirmPassword: confirmPassword,
+                              context: context,
+                            );
+
+                            // navigate to main screen
+                            if (context.mounted) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) {
+                                    return MainScreen();
+                                  },
+                                ),
+                              );
+                            }
                           }
                         },
                         child: CustomPageButton(
