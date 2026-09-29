@@ -14,20 +14,23 @@ class CustomPageButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(kMainPadding),
-      child: Container(
-        width: double.infinity,
-        padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(100), color: buttonColor,),
-        child: Text(
-          buttonText,
-          style: TextStyle(
-            fontSize: 16,
-            color: kWhite,
-            fontWeight: FontWeight.w500,
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: Padding(
+        padding: const EdgeInsets.all(kMainPadding),
+        child: Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(100), color: buttonColor,),
+          child: Text(
+            buttonText,
+            style: TextStyle(
+              fontSize: 16,
+              color: kWhite,
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.center,
           ),
-          textAlign: TextAlign.center,
         ),
       ),
     );

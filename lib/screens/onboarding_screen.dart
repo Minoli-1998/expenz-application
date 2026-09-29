@@ -1,7 +1,7 @@
 import 'package:expenz_application/data/onboarding_data.dart';
 import 'package:expenz_application/screens/onboarding/front_page.dart';
 import 'package:expenz_application/screens/onboarding/shared_onboarding_screen.dart';
-import 'package:expenz_application/screens/user_data_screen.dart';
+import 'package:expenz_application/screens/user_form_screen.dart';
 import 'package:expenz_application/utils/colors.dart';
 import 'package:expenz_application/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
@@ -92,7 +92,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => UserDataScreen(),
+                                builder: (context) => UserFormScreen(),
                               ),
                             );
                           },
