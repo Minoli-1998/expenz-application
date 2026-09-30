@@ -1,7 +1,6 @@
 import 'package:expenz_application/screens/income_expense_card.dart';
 import 'package:expenz_application/services/user_services.dart';
 import 'package:expenz_application/utils/colors.dart';
-import 'package:expenz_application/utils/constants.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
