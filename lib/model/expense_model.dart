@@ -38,4 +38,34 @@ class Expense {
     required this.time,
     required this.category,
   });
+
+  // SERIALIZATION
+  // converting the Expense object to JSON object
+  // in JSON the key must be a String
+  Map<String, dynamic> toJSON() {
+    return {
+      'id': id,
+      'title': title,
+      'description': description,
+      'amount': amount,
+      'category': category.index,
+      'date': date.toIso8601String(),
+      'time': time.toIso8601String(),
+    };
+  }
+
+  // DESERIALIZATION
+  // create an Expense object from a JSON object
+  // json is the name of the object we got from JSON object deserialization not a keyword
+  factory Expense.fromJSON(Map<String, dynamic> json) {
+    return Expense(
+      id: json['id'],
+      title: json['title'],
+      description: json['description'],
+      amount: json['amount'],
+      date: DateTime.parse(json['date']),
+      time: DateTime.parse(json['time']),
+      category: ExpenseCategory.values[json['category']],
+    );
+  }
 }
