@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:expenz_application/model/expense_model.dart';
 import 'package:expenz_application/model/income_model.dart';
+import 'package:expenz_application/services/expense_services.dart';
 import 'package:expenz_application/utils/colors.dart';
 import 'package:expenz_application/utils/constants.dart';
 import 'package:expenz_application/widgets/custom_button.dart';
@@ -7,7 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class AddNewScreen extends StatefulWidget {
-  const AddNewScreen({super.key});
+  final Function(Expense) addExpense;
+  const AddNewScreen({super.key, required this.addExpense});
 
   @override
   State<AddNewScreen> createState() => _AddNewScreenState();
@@ -38,6 +42,12 @@ class _AddNewScreenState extends State<AddNewScreen> {
   // formatting date
   DateFormat dateFormat = DateFormat("MMMM EEEE");
   DateFormat dayFormat = DateFormat("dd");
+
+  DateTime timeOfDayToDateTime(TimeOfDay time) {
+    final now = DateTime.now();
+
+    return DateTime(now.year, now.month, now.day, time.hour, time.minute);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -391,9 +401,32 @@ class _AddNewScreenState extends State<AddNewScreen> {
                         radius: BorderRadius.circular(20),
                       ),
 
-                      CustomPageButton(
-                        buttonColor: _cardIndex == 0 ? kRed : kGreen,
-                        buttonText: "Add",
+                      GestureDetector(
+                        onTap: () async {
+                          // save the expenses or income data in shared prefs
+                          List<Expense> loadExpenses = await ExpenseServices()
+                              .loadExpenses();
+
+                          // create the expense to store
+                          Expense expense = Expense(
+                            id: loadExpenses.length + 1,
+                            title: _titleController.text,
+                            description: _descriptionController.text,
+                            amount: _amountController.text.isEmpty
+                                ? 0
+                                : double.parse(_amountController.text),
+                            date: _selectedDate,
+                            time: timeOfDayToDateTime(_selectedTime),
+                            category: _expenseCategory,
+                          );
+
+                          // save new expense
+                          widget.addExpense(expense);
+                        },
+                        child: CustomPageButton(
+                          buttonColor: _cardIndex == 0 ? kRed : kGreen,
+                          buttonText: "Add",
+                        ),
                       ),
                     ],
                   ),
