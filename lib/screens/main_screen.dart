@@ -1,10 +1,12 @@
 import 'package:expenz_application/model/expense_model.dart';
+import 'package:expenz_application/model/income_model.dart';
 import 'package:expenz_application/screens/add_new_screen.dart';
 import 'package:expenz_application/screens/budget_screen.dart';
 import 'package:expenz_application/screens/home_screen.dart';
 import 'package:expenz_application/screens/profile_screen.dart';
 import 'package:expenz_application/screens/transactions_screen.dart';
 import 'package:expenz_application/services/expense_services.dart';
+import 'package:expenz_application/services/income_services.dart';
 import 'package:expenz_application/utils/colors.dart';
 import 'package:flutter/material.dart';
 
@@ -39,11 +41,33 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
+  // create an income list
+  List<Income> incomeList = [];
+
+  // function to fetch incomes
+  void fetchAllIncomes() async {
+    List<Income> loadedIncomes = await IncomeServices().loadIncome();
+    setState(() {
+      incomeList = loadedIncomes;
+    });
+  }
+
+  // function to add new income
+  void addNewIncome(Income newIncome) {
+    IncomeServices().saveIncome(newIncome, context);
+
+    // update the income list
+    setState(() {
+      incomeList.add(newIncome);
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     setState(() {
       fetchAllExpenses();
+      fetchAllIncomes();
     });
   }
 
@@ -52,7 +76,7 @@ class _MainScreenState extends State<MainScreen> {
     final List<Widget> pages = [
       HomeScreen(),
       TransactionsScreen(),
-      AddNewScreen(addExpense: addNewexpense),
+      AddNewScreen(addExpense: addNewexpense, addIncome: addNewIncome),
       BudgetScreen(),
       ProfileScreen(),
     ];

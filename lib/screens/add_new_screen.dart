@@ -1,8 +1,7 @@
-import 'dart:math';
-
 import 'package:expenz_application/model/expense_model.dart';
 import 'package:expenz_application/model/income_model.dart';
 import 'package:expenz_application/services/expense_services.dart';
+import 'package:expenz_application/services/income_services.dart';
 import 'package:expenz_application/utils/colors.dart';
 import 'package:expenz_application/utils/constants.dart';
 import 'package:expenz_application/widgets/custom_button.dart';
@@ -11,7 +10,13 @@ import 'package:intl/intl.dart';
 
 class AddNewScreen extends StatefulWidget {
   final Function(Expense) addExpense;
-  const AddNewScreen({super.key, required this.addExpense});
+  final Function(Income) addIncome;
+
+  const AddNewScreen({
+    super.key,
+    required this.addExpense,
+    required this.addIncome,
+  });
 
   @override
   State<AddNewScreen> createState() => _AddNewScreenState();
@@ -181,7 +186,6 @@ class _AddNewScreenState extends State<AddNewScreen> {
                       // drop down field
                       DropdownButtonFormField(
                         decoration: InputDecoration(
-                          hintText: "Category",
                           hintStyle: TextStyle(
                             color: kLightGrey,
                             fontSize: 16,
@@ -205,6 +209,9 @@ class _AddNewScreenState extends State<AddNewScreen> {
                                   child: Text(category.name),
                                 );
                               }).toList(),
+                        initialValue: _cardIndex == 0
+                            ? _expenseCategory
+                            : _incomeCategory,
                         onChanged: (value) {
                           setState(() {
                             _cardIndex == 0
@@ -403,25 +410,57 @@ class _AddNewScreenState extends State<AddNewScreen> {
 
                       GestureDetector(
                         onTap: () async {
-                          // save the expenses or income data in shared prefs
-                          List<Expense> loadExpenses = await ExpenseServices()
-                              .loadExpenses();
+                          if (_cardIndex == 0) {
+                            // save the expenses in shared prefs
+                            List<Expense> loadExpenses = await ExpenseServices()
+                                .loadExpenses();
 
-                          // create the expense to store
-                          Expense expense = Expense(
-                            id: loadExpenses.length + 1,
-                            title: _titleController.text,
-                            description: _descriptionController.text,
-                            amount: _amountController.text.isEmpty
-                                ? 0
-                                : double.parse(_amountController.text),
-                            date: _selectedDate,
-                            time: timeOfDayToDateTime(_selectedTime),
-                            category: _expenseCategory,
-                          );
+                            // create the expense to store
+                            Expense expense = Expense(
+                              id: loadExpenses.length + 1,
+                              title: _titleController.text,
+                              description: _descriptionController.text,
+                              amount: _amountController.text.isEmpty
+                                  ? 0
+                                  : double.parse(_amountController.text),
+                              date: _selectedDate,
+                              time: timeOfDayToDateTime(_selectedTime),
+                              category: _expenseCategory,
+                            );
 
-                          // save new expense
-                          widget.addExpense(expense);
+                            // save new expense
+                            widget.addExpense(expense);
+
+                            // clear the fields
+                            _titleController.clear();
+                            _amountController.clear();
+                            _descriptionController.clear();
+                          } else {
+                            // save the income in shared preferences
+                            List<Income> loadIcomes = await IncomeServices()
+                                .loadIncome();
+
+                            // create an income object to store
+                            Income income = Income(
+                              id: loadIcomes.length + 1,
+                              title: _titleController.text,
+                              description: _descriptionController.text,
+                              amount: _amountController.text.isEmpty
+                                  ? 0
+                                  : double.parse(_amountController.text),
+                              date: _selectedDate,
+                              time: timeOfDayToDateTime(_selectedTime),
+                              category: _incomeCategory,
+                            );
+
+                            // save new income
+                            widget.addIncome(income);
+
+                            // clear the fields
+                            _titleController.clear();
+                            _amountController.clear();
+                            _descriptionController.clear();
+                          }
                         },
                         child: CustomPageButton(
                           buttonColor: _cardIndex == 0 ? kRed : kGreen,
