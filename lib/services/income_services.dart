@@ -103,7 +103,7 @@ class IncomeServices {
           .toList();
 
       // save in Shared preferences
-      pref.setStringList(_incomeKey, updatedList);
+      await pref.setStringList(_incomeKey, updatedList);
 
       // display the message
       if (context.mounted) {

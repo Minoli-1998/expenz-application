@@ -49,28 +49,32 @@ class IncomeCard extends StatelessWidget {
 
               SizedBox(width: 10),
 
-              Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    category.name,
-                    style: TextStyle(
-                      color: kBlack,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500,
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.35,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      category.name,
+                      style: TextStyle(
+                        color: kBlack,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                  ),
-
-                  Text(
-                    description,
-                    style: TextStyle(
-                      color: kGrey,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
+                
+                    Text(
+                      description,
+                      style: TextStyle(
+                        color: kGrey,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),

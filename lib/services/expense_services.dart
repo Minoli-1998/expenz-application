@@ -105,7 +105,7 @@ class ExpenseServices {
           .toList();
 
       // save to shared preferences
-      pref.setStringList(_expenseKey, updatedList);
+      await pref.setStringList(_expenseKey, updatedList);
 
       // displaying the message
       if (context.mounted) {
