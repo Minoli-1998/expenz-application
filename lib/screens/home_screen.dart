@@ -1,10 +1,22 @@
+import 'package:expenz_application/model/expense_model.dart';
+import 'package:expenz_application/model/income_model.dart';
 import 'package:expenz_application/screens/income_expense_card.dart';
 import 'package:expenz_application/services/user_services.dart';
 import 'package:expenz_application/utils/colors.dart';
+import 'package:expenz_application/utils/constants.dart';
+import 'package:expenz_application/widgets/expense_card.dart';
+import 'package:expenz_application/widgets/line_chart_sample.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final List<Expense> expensesList;
+  final List<Income> incomeList;
+
+  const HomeScreen({
+    super.key,
+    required this.expensesList,
+    required this.incomeList,
+  });
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -12,6 +24,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   String userName = "";
+  double expenseAmount = 0;
+  double incomeAmount = 0;
 
   @override
   void initState() {
@@ -22,6 +36,19 @@ class _HomeScreenState extends State<HomeScreen> {
         });
       }
     });
+
+    setState(() {
+      // calculating the expense amount
+      for (var i = 0; i < widget.expensesList.length; i++) {
+        expenseAmount += widget.expensesList[i].amount;
+      }
+
+      // calculating the income amount
+      for (var i = 0; i < widget.incomeList.length; i++) {
+        incomeAmount += widget.incomeList[i].amount;
+      }
+    });
+
     super.initState();
   }
 
@@ -30,6 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
               decoration: BoxDecoration(
@@ -95,20 +123,122 @@ class _HomeScreenState extends State<HomeScreen> {
                         bgColor: kGreen,
                         imageUrl: 'assets/images/income.png',
                         title: 'Income',
-                        amount: 5000,
+                        amount: incomeAmount,
                       ),
 
                       IncomeExpenseCard(
                         bgColor: kRed,
                         imageUrl: 'assets/images/expense.png',
                         title: 'Expenses',
-                        amount: 1200,
+                        amount: expenseAmount,
                       ),
                     ],
                   ),
 
-                  SizedBox(
-                    height: 20,
+                  SizedBox(height: 20),
+                ],
+              ),
+            ),
+
+            Padding(
+              padding: EdgeInsetsGeometry.all(kMainPadding),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Spend Frequency",
+                    style: TextStyle(
+                      color: kBlack,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+
+                  SizedBox(height: 20),
+
+                  LineChartSample(),
+
+                  // recent transactions
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: kMainPadding),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Recent Transaction",
+                              style: TextStyle(
+                                color: kBlack,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+
+                            GestureDetector(
+                              onTap: () {},
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  vertical: 8,
+                                  horizontal: 16,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Color(0xffEEE5FF),
+                                  borderRadius: BorderRadius.circular(40),
+                                ),
+                                child: Text(
+                                  "See All",
+                                  style: TextStyle(
+                                    color: kMainColor,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        SizedBox(height: 20),
+
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.5,
+                          child: SingleChildScrollView(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                widget.expensesList.isEmpty
+                                    ? Text(
+                                        "No expenses added yet, add some expenses here",
+                                        style: TextStyle(
+                                          color: kGrey,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      )
+                                    : ListView.builder(
+                                        itemCount: widget.expensesList.length,
+                                        shrinkWrap: true,
+                                        scrollDirection: Axis.vertical,
+                                        physics: NeverScrollableScrollPhysics(),
+                                        itemBuilder: (context, index) {
+                                          final expense =
+                                              widget.expensesList[index];
+                                          return ExpenseCard(
+                                            category: expense.category,
+                                            description: expense.description,
+                                            amount: expense.amount,
+                                            time: expense.time,
+                                          );
+                                        },
+                                      ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),

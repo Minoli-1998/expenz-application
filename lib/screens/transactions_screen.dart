@@ -63,34 +63,45 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
-                        ListView.builder(
-                          itemCount: widget.expensesList.length,
-                          shrinkWrap: true,
-                          scrollDirection: Axis.vertical,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            final expense = widget.expensesList[index];
-                            return Dismissible(
-                              key: ValueKey(expense),
-                              direction: DismissDirection.startToEnd,
-                              onDismissed: (direction) {
-                                setState(() {
-                                  widget.onDismissedExpense(expense);
-                                });
-                              },
-                              child: ExpenseCard(
-                                category: expense.category,
-                                description: expense.description,
-                                amount: expense.amount,
-                                time: expense.time,
+                        widget.expensesList.isEmpty
+                            ? Text(
+                                "No expenses added yet, add some expenses here",
+                                style: TextStyle(
+                                  color: kGrey,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              )
+                            : ListView.builder(
+                                itemCount: widget.expensesList.length,
+                                shrinkWrap: true,
+                                scrollDirection: Axis.vertical,
+                                physics: NeverScrollableScrollPhysics(),
+                                itemBuilder: (context, index) {
+                                  final expense = widget.expensesList[index];
+                                  return Dismissible(
+                                    key: ValueKey(expense),
+                                    direction: DismissDirection.startToEnd,
+                                    onDismissed: (direction) {
+                                      setState(() {
+                                        widget.onDismissedExpense(expense);
+                                      });
+                                    },
+                                    child: ExpenseCard(
+                                      category: expense.category,
+                                      description: expense.description,
+                                      amount: expense.amount,
+                                      time: expense.time,
+                                    ),
+                                  );
+                                },
                               ),
-                            );
-                          },
-                        ),
                       ],
                     ),
                   ),
                 ),
+
+                SizedBox(height: 15),
 
                 Text(
                   "Income",
@@ -109,30 +120,39 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
-                        ListView.builder(
-                          itemCount: widget.incomeList.length,
-                          shrinkWrap: true,
-                          scrollDirection: Axis.vertical,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            final income = widget.incomeList[index];
-                            return Dismissible(
-                              key: ValueKey(income),
-                              direction: DismissDirection.startToEnd,
-                              onDismissed: (direction) {
-                                setState(() {
-                                  widget.onDissmissedIncome(income);
-                                });
-                              },
-                              child: IncomeCard(
-                                category: income.category,
-                                description: income.description,
-                                amount: income.amount,
-                                time: income.time,
+                        widget.incomeList.isEmpty
+                            ? Text(
+                                "No incomes added yet, add some incomes here",
+                                style: TextStyle(
+                                  color: kGrey,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              )
+                            : ListView.builder(
+                                itemCount: widget.incomeList.length,
+                                shrinkWrap: true,
+                                scrollDirection: Axis.vertical,
+                                physics: NeverScrollableScrollPhysics(),
+                                itemBuilder: (context, index) {
+                                  final income = widget.incomeList[index];
+                                  return Dismissible(
+                                    key: ValueKey(income),
+                                    direction: DismissDirection.startToEnd,
+                                    onDismissed: (direction) {
+                                      setState(() {
+                                        widget.onDissmissedIncome(income);
+                                      });
+                                    },
+                                    child: IncomeCard(
+                                      category: income.category,
+                                      description: income.description,
+                                      amount: income.amount,
+                                      time: income.time,
+                                    ),
+                                  );
+                                },
                               ),
-                            );
-                          },
-                        ),
                       ],
                     ),
                   ),
