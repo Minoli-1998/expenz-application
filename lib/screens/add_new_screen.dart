@@ -50,9 +50,10 @@ class _AddNewScreenState extends State<AddNewScreen> {
 
   DateTime timeOfDayToDateTime(TimeOfDay time) {
     final now = DateTime.now();
-
     return DateTime(now.year, now.month, now.day, time.hour, time.minute);
   }
+
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -181,6 +182,7 @@ class _AddNewScreenState extends State<AddNewScreen> {
                   ),
                 ),
                 child: Form(
+                  key: _formKey,
                   child: Column(
                     children: [
                       // drop down field
@@ -226,6 +228,11 @@ class _AddNewScreenState extends State<AddNewScreen> {
                       // title
                       TextFormField(
                         controller: _titleController,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return "Enter a title!";
+                          }
+                        },
                         decoration: InputDecoration(
                           hintText: "Title",
                           hintStyle: TextStyle(
@@ -245,6 +252,11 @@ class _AddNewScreenState extends State<AddNewScreen> {
                       // description
                       TextFormField(
                         controller: _descriptionController,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return "Enter a description!";
+                          }
+                        },
                         decoration: InputDecoration(
                           hintText: "Description",
                           hintStyle: TextStyle(
@@ -264,6 +276,19 @@ class _AddNewScreenState extends State<AddNewScreen> {
                       // amount
                       TextFormField(
                         controller: _amountController,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return "Enter an amount!";
+                          }
+
+                          double? amount = double.tryParse(value);
+
+                          if (amount == null || amount <= 0) {
+                            return "Please enter a valid amount";
+                          }
+
+                          return null;
+                        },
                         keyboardType: TextInputType.number,
                         decoration: InputDecoration(
                           hintText: "Amount",
@@ -410,56 +435,58 @@ class _AddNewScreenState extends State<AddNewScreen> {
 
                       GestureDetector(
                         onTap: () async {
-                          if (_cardIndex == 0) {
-                            // save the expenses in shared prefs
-                            List<Expense> loadExpenses = await ExpenseServices()
-                                .loadExpenses();
+                          if (_formKey.currentState!.validate()) {
+                            if (_cardIndex == 0) {
+                              // save the expenses in shared prefs
+                              List<Expense> loadExpenses =
+                                  await ExpenseServices().loadExpenses();
 
-                            // create the expense to store
-                            Expense expense = Expense(
-                              id: loadExpenses.length + 1,
-                              title: _titleController.text,
-                              description: _descriptionController.text,
-                              amount: _amountController.text.isEmpty
-                                  ? 0
-                                  : double.parse(_amountController.text),
-                              date: _selectedDate,
-                              time: timeOfDayToDateTime(_selectedTime),
-                              category: _expenseCategory,
-                            );
+                              // create the expense to store
+                              Expense expense = Expense(
+                                id: loadExpenses.length + 1,
+                                title: _titleController.text,
+                                description: _descriptionController.text,
+                                amount: _amountController.text.isEmpty
+                                    ? 0
+                                    : double.parse(_amountController.text),
+                                date: _selectedDate,
+                                time: timeOfDayToDateTime(_selectedTime),
+                                category: _expenseCategory,
+                              );
 
-                            // save new expense
-                            widget.addExpense(expense);
+                              // save new expense
+                              widget.addExpense(expense);
 
-                            // clear the fields
-                            _titleController.clear();
-                            _amountController.clear();
-                            _descriptionController.clear();
-                          } else {
-                            // save the income in shared preferences
-                            List<Income> loadIcomes = await IncomeServices()
-                                .loadIncome();
+                              // clear the fields
+                              _titleController.clear();
+                              _amountController.clear();
+                              _descriptionController.clear();
+                            } else {
+                              // save the income in shared preferences
+                              List<Income> loadIcomes = await IncomeServices()
+                                  .loadIncome();
 
-                            // create an income object to store
-                            Income income = Income(
-                              id: loadIcomes.length + 1,
-                              title: _titleController.text,
-                              description: _descriptionController.text,
-                              amount: _amountController.text.isEmpty
-                                  ? 0
-                                  : double.parse(_amountController.text),
-                              date: _selectedDate,
-                              time: timeOfDayToDateTime(_selectedTime),
-                              category: _incomeCategory,
-                            );
+                              // create an income object to store
+                              Income income = Income(
+                                id: loadIcomes.length + 1,
+                                title: _titleController.text,
+                                description: _descriptionController.text,
+                                amount: _amountController.text.isEmpty
+                                    ? 0
+                                    : double.parse(_amountController.text),
+                                date: _selectedDate,
+                                time: timeOfDayToDateTime(_selectedTime),
+                                category: _incomeCategory,
+                              );
 
-                            // save new income
-                            widget.addIncome(income);
+                              // save new income
+                              widget.addIncome(income);
 
-                            // clear the fields
-                            _titleController.clear();
-                            _amountController.clear();
-                            _descriptionController.clear();
+                              // clear the fields
+                              _titleController.clear();
+                              _amountController.clear();
+                              _descriptionController.clear();
+                            }
                           }
                         },
                         child: CustomPageButton(
