@@ -48,13 +48,21 @@ class UserServices {
   }
 
   // methode to get username and email
-  static Future<Map <String, String>> getUserDetails() async {
+  static Future<Map<String, String>> getUserDetails() async {
     // creating sharedPreferences instance
     SharedPreferences pref = await SharedPreferences.getInstance();
 
     String? userName = pref.getString('username');
     String? email = pref.getString('email');
 
-    return {"username" :userName!, "email" :email!};
+    return {"username": userName!, "email": email!};
+  }
+
+  // methode to remove user data
+  static Future<void> clearUserData() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+
+    await preferences.remove('username');
+    await preferences.remove('email');
   }
 }
